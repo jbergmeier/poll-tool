@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 require("dotenv").config()
-mongoose.connect('mongodb+srv://db_poll_user:6tFXV5DywcvC@cluster0.rlosr.mongodb.net/poll_dev?retryWrites=true&w=majority&ssl=true', { useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb+srv://',process.env.DB_USER,':',process.env.DB_PASSWORD,'@cluster0.rlosr.mongodb.net/',process.env.DB_DATABASE,'?retryWrites=true&w=majority&ssl=true', { useNewUrlParser: true, useUnifiedTopology: true});
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
