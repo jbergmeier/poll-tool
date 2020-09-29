@@ -31,8 +31,9 @@ app.use(bodyParser.json())
 // Show default Page. 
 app.get("/poll/show", async(req, res, next) => {
     try {
-        res.status(200).json('message: ok')
-        console.log(await Poll.find({}))
+        res.status(200).json(
+            await Poll.find({})
+        )
     }
     catch(err) {
         next(err)
@@ -61,7 +62,7 @@ app.post("/poll/vote", async(req, res, next) => {
     const pollId = req.body.pollId
 
     try {
-        await Poll.update({"_id": pollId, "answers._id": answerId}, {$inc: {"answers.$.votes": 1}})
+        await Poll.updateOne({"_id": pollId, "answers._id": answerId}, {$inc: {"answers.$.votes": 1}})
         res.status(200).json(
             await Poll.find({"_id": pollId})
         )
