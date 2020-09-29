@@ -17,30 +17,61 @@ const Poll = mongoose.model('Poll', pollSchema);
 const app = express()
 const port = 1337 || process.env.PORT
 
+// ----
 // Middleware
+// ----
 app.use(cors())
 app.use(morgan('tiny'))
 app.use(bodyParser.json())
 
-// Testing
-// let test = new Poll({
-//     question: "Hello23"
-// })
-// test.save((err, poll) => {
-//     console.log(poll.id)
-// })
-
-
+// ----
 // Routes
-app.get("/", async(req, res, next) => {
+// ----
+
+// Show default Page. 
+app.get("/poll/show", async(req, res, next) => {
     try {
         res.status(200).json('message: ok')
+        console.log(await Poll.find({}))
     }
     catch(err) {
         next(err)
     }
 })
 
+// Show one specific poll based on the pollCode
+app.get("/poll/show/:code", async(req, res, next) => {
+    const pollCode = req.params.code
+    try {
+        res.status(200).json(
+            await Poll.find({code: pollCode})
+        )
+        console.log(await Poll.find({code: pollCode}))
+    }
+    catch(err) {
+        next(err)
+    }
+})
+
+
+// Vote for one specific poll
+app.post("/poll/vote", async(req, res, next) => {
+    //const pollCode = req.params.code
+    const answerId = req.body.answerId
+    const pollId = req.body.pollId
+
+    try {
+        await Poll.update({"_id": pollId, "answers._id": answerId}, {$inc: {"answers.$.votes": 1}})
+        res.status(200).json(
+            await Poll.find({"_id": pollId})
+        )
+    }
+    catch(err) {
+        next(err)
+    }
+})
+
+// Create new Poll
 app.post("/new-poll", async(req, res, next) => {
     try {
         const getPollCode = makeid(10)
